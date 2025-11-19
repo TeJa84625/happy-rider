@@ -280,7 +280,7 @@
                 // 2. SUCCESS: User successfully logged in via Firebase Auth
                 if (userCredential && userCredential.user) {
                     await updateUserDocument(userCredential.user, password);
-                    window.location.href = "index.html";
+                    window.location.href = "main.html";
                 }
 
             } catch (error) {
@@ -293,5 +293,6 @@
 
     </script>
 </body>
+
 
 </html>
