@@ -35,7 +35,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* --- NAVIGATION BAR (Copied from index.html) --- */
+        /* --- NAVIGATION BAR (Copied from main.html) --- */
         .header-bar {
             position: fixed;
             top: 0;
@@ -577,7 +577,7 @@
                 <div class="user" id="menu-username">N/A</div>
                 <div class="muted">Profile Menu</div>
 
-                <button class="menu-btn" onclick="gotoPage('index.html')">Dashboard</button>
+                <button class="menu-btn" onclick="gotoPage('main.html')">Dashboard</button>
                 <button class="menu-btn" onclick="gotoPage('profile.html')">Profile</button>
                 <button class="menu-btn" onclick="gotoPage('wallet.html')">Wallet</button>
                 <button class="menu-btn" onclick="gotoPage('history.html')">History</button>
@@ -695,7 +695,7 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // --- FIREBASE CONFIGURATION (REPLICATED FROM INDEX.HTML) ---
+        // --- FIREBASE CONFIGURATION (REPLICATED FROM main.HTML) ---
         const firebaseConfig = {
             apiKey: "AIzaSyB1fdsIDsOmds8sT9thk_eTPBCW5UC02BM",
             authDomain: "happy-rider-restaurant.firebaseapp.com",
@@ -1126,7 +1126,7 @@
 
         // --- AUTH & INIT ---
 
-        // Navigation helpers (Replicated from index.html)
+        // Navigation helpers (Replicated from main.html)
         window.gotoPage = function (name) {
             if (name === 'menu.html') {
                 document.getElementById('profileDropdown').classList.remove('show');
@@ -1137,7 +1137,7 @@
 
         window.logout = function () {
             signOut(auth).then(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }).catch((error) => {
                 alert("Logout Error: " + error.message);
             });
@@ -1167,7 +1167,7 @@
                 setupProfileMenu(currentUsername);
                 loadItems();
             } else {
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             }
         });
 
@@ -1175,5 +1175,6 @@
 
 
 </body>
+
 
 </html>
