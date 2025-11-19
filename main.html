@@ -699,24 +699,75 @@
             <div class="section">
                 <label>Business Type *</label>
                 <div class="radio-block">
-                    <label class="radio-inline"><input type="radio" name="bt_main" value="home_maker"
-                            required><span>Home Maker</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main" value="cloud_kitchen"><span>Cloud
-                            Kitchen</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main" value="multi_cuisine"><span>Multi
-                            Cuisine Restaurant</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main"
-                            value="daba"><span>Daba</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main"
-                            value="cafe"><span>Cafe</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main"
-                            value="bakery"><span>Bakery</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main" value="street_stall"><span>Street
-                            Food Stall</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main" value="food_truck"><span>Food
-                            Truck</span></label>
-                    <label class="radio-inline"><input type="radio" name="bt_main"
-                            value="others"><span>Others</span></label>
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="multi_cuisine" required>
+                        <span>Multi Cuisine Restaurant</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="cloud_kitchen">
+                        <span>Cloud Kitchen</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="food_truck">
+                        <span>Food Truck</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="street_stall">
+                        <span>Street Food Stall</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="bakery">
+                        <span>Bakery</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="cafe">
+                        <span>Cafe</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="daba">
+                        <span>Daba</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="home_maker">
+                        <span>Home Maker</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="grocery_store">
+                        <span>Grocery Store</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="meat_store">
+                        <span>Meat Store</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="vegetables_fruits">
+                        <span>Vegetables and Fruits Vendors</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="batter_shop">
+                        <span>Batter Shop</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="sweet_snacks">
+                        <span>Sweet & Snacks Shop</span>
+                    </label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="bt_main" value="others">
+                        <span>Others</span>
+                    </label>
                 </div>
                 <input id="businessTypeOther" type="text" class="hidden" placeholder="Specify other business type"
                     style="margin-top:10px;">
@@ -891,6 +942,8 @@
         // --- AUTH & PAGE ROUTER ---
         onAuthStateChanged(auth, async (user) => {
             const loader = document.getElementById('loader-overlay');
+            const waButton = document.getElementById('whatsapp-link');
+
             if (user) {
                 // 1. Determine the username based on the logged-in user's email
                 currentUsername = generateUsernameFromEmail(user.email);
@@ -909,14 +962,27 @@
                     const statusData = statusSnap.data();
                     setupProfileMenu(statusData);
 
+                    // --- WhatsApp Link Setup for Support (visible if not verified) ---
+                    const supportPhone = "+919177180258"; // Example Support Number
+                    const message = `Hello, I have a query about my Happy Riders application. My username is ${statusData.username}.`;
+                    const waLink = `https://wa.me/${supportPhone}?text=${encodeURIComponent(message)}`;
+                    waButton.href = waLink;
+                    // --- End WhatsApp Link Setup ---
+
+
                     if (statusData.detailsSubmitted === false) {
                         // Show Registration Form
                         document.getElementById('registration-form').style.display = "block";
+                        // Display WhatsApp button for support while filling the form
+                        waButton.style.display = 'flex';
+
                     } else if (statusData.verified === false) {
                         // Show Status Screen (Under Review)
                         const detailsRef = doc(db, "users/restaurants", currentUsername, "restaurant_details");
                         const detailsSnap = await getDoc(detailsRef);
                         showStatusPage(statusData, detailsSnap.data());
+                        // showStatusPage will set waButton.style.display = 'flex'
+
                     } else {
                         // VERIFIED: Show Dashboard
                         document.getElementById('dashboard-container').style.display = "block";
@@ -1054,13 +1120,8 @@
                     <div class="review-item"><label>Coordinates</label> <span>Lat: ${d.location.lat}, Lng: ${d.location.lng}</span></div>
                 </div>`;
 
-            // Set up WhatsApp link
-            const supportPhone = "+919177180258"; // Example Support Number
-            const message = `Hello, I have a query about my application.\nRestaurant: ${d.restaurantName}\nUser: ${statusData.username}`;
-            const waLink = `https://wa.me/${supportPhone}?text=${encodeURIComponent(message)}`;
-            const waButton = document.getElementById('whatsapp-link');
-            waButton.href = waLink;
-            waButton.style.display = 'flex';
+            // Set up WhatsApp link visibility (redundant now but kept for clarity on status screen)
+            document.getElementById('whatsapp-link').style.display = 'flex';
         }
 
         // --- 3. DASHBOARD (MOCK DATA) ---
