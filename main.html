@@ -696,85 +696,31 @@
             <div class="section"><label for="ownerName">Owner Name *</label><input id="ownerName" type="text"
                     placeholder="Owner full name" required></div>
 
+            <div class="section"><label id="nameLabel">Food Service Name (As per FSSAI) *</label><input id="restaurantName"
+                    type="text" required></div>
+
             <div class="section">
                 <label>Business Type *</label>
-                <div class="radio-block">
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="multi_cuisine" required>
-                        <span>Multi Cuisine Restaurant</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="cloud_kitchen">
-                        <span>Cloud Kitchen</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="food_truck">
-                        <span>Food Truck</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="street_stall">
-                        <span>Street Food Stall</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="bakery">
-                        <span>Bakery</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="cafe">
-                        <span>Cafe</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="daba">
-                        <span>Daba</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="home_maker">
-                        <span>Home Maker</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="grocery_store">
-                        <span>Grocery Store</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="meat_store">
-                        <span>Meat Store</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="vegetables_fruits">
-                        <span>Vegetables and Fruits Vendors</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="batter_shop">
-                        <span>Batter Shop</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="sweet_snacks">
-                        <span>Sweet & Snacks Shop</span>
-                    </label><br>
-
-                    <label class="radio-inline">
-                        <input type="radio" name="bt_main" value="others">
-                        <span>Others</span>
-                    </label>
-                </div>
+                <select id="businessType" required>
+                    <option value="">Select Business Type</option>
+                    <option value="multi_cuisine">Multi Cuisine Restaurant</option>
+                    <option value="cloud_kitchen">Cloud Kitchen</option>
+                    <option value="food_truck">Food Truck</option>
+                    <option value="street_stall">Street Food Stall</option>
+                    <option value="bakery">Bakery</option>
+                    <option value="cafe">Cafe</option>
+                    <option value="daba">Daba</option>
+                    <option value="home_maker">Home Maker</option>
+                    <option value="grocery_store">Grocery Store</option>
+                    <option value="meat_store">Meat Store</option>
+                    <option value="vegetables_fruits">Vegetables and Fruits Vendors</option>
+                    <option value="batter_shop">Batter Shop</option>
+                    <option value="sweet_snacks">Sweet & Snacks Shop</option>
+                    <option value="others">Others (Specify below)</option>
+                </select>
                 <input id="businessTypeOther" type="text" class="hidden" placeholder="Specify other business type"
                     style="margin-top:10px;">
             </div>
-
-            <div class="section"><label id="nameLabel">Restaurant Name (As per FSSAI) *</label><input
-                    id="restaurantName" type="text" required></div>
 
             <div class="grid-2 section">
                 <div><label>FSSAI Type *</label><select id="fssaiType" required>
@@ -1012,14 +958,18 @@
             const lng = document.getElementById('loc-y').value;
             const fullPincode = getPincode();
             const fullFssai = getFssaiNumber();
-            const busType = document.querySelector('input[name="bt_main"]:checked');
+
+            // Get value from the select box
+            const busTypeSelect = document.getElementById('businessType');
+            const busTypeValue = busTypeSelect.value;
+
             let otherInput = null;
             const ownerPhone = document.getElementById('ownerPhone').value;
             const managerPhone = document.getElementById('managerPhone').value;
 
             // Minimal validation checks
-            if (!busType) { alert("Please select a Business Type."); return; }
-            if (busType.value === 'others') {
+            if (!busTypeValue) { alert("Please select a Business Type."); return; }
+            if (busTypeValue === 'others') {
                 otherInput = document.getElementById('businessTypeOther');
                 if (!otherInput.value) { alert("Please specify 'Others' for Business Type."); return; }
             }
@@ -1036,14 +986,14 @@
             document.getElementById('form-loader').style.display = 'flex';
             document.getElementById('submitBtn').disabled = true;
 
-            let busTypeValue = busType.value;
-            if (otherInput && busType.value === 'others') busTypeValue = otherInput.value;
+            let finalBusTypeValue = busTypeValue;
+            if (otherInput && busTypeValue === 'others') finalBusTypeValue = otherInput.value;
 
             const gstNumberValue = gstReg === 'yes' ? document.getElementById('gstNumber').value : "N/A";
 
             const formData = {
                 ownerName: document.getElementById('ownerName').value,
-                businessType: busTypeValue,
+                businessType: finalBusTypeValue, // Use the potentially modified value
                 restaurantName: document.getElementById('restaurantName').value,
                 fssaiType: document.getElementById('fssaiType').value,
                 fssaiNumber: fullFssai,
@@ -1298,7 +1248,11 @@
             }
         };
 
-        document.querySelectorAll('input[name="bt_main"]').forEach(r => r.addEventListener('change', e => document.getElementById('businessTypeOther').classList.toggle('hidden', e.target.value !== 'others')));
+        // NEW LOGIC: Use the 'change' event on the 'select' element
+        document.getElementById('businessType').addEventListener('change', (e) => {
+            document.getElementById('businessTypeOther').classList.toggle('hidden', e.target.value !== 'others');
+        });
+
         document.querySelectorAll('input[name="gstReg"]').forEach(r => r.addEventListener('change', e => document.getElementById('gstNumber').classList.toggle('hidden', e.target.value !== 'yes')));
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "index.html"));
     </script>
