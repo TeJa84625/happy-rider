@@ -598,6 +598,9 @@
             } else if (name === 'profile.html') {
                 // Already on the profile page, just close the menu
                 dropdownEl.classList.remove('show');
+            }  else if (name === 'menu.html') {
+                // Already on the profile page, just close the menu
+                window.location.href = name;
             }
             else {
                 // General navigation
@@ -617,3 +620,4 @@
 
 
 </html>
+
